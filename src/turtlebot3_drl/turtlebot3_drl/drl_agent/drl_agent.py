@@ -34,6 +34,7 @@ from ..common import utilities as util
 from .dqn import DQN
 from .ddpg import DDPG
 from .td3 import TD3
+from .sac import SAC
 
 from turtlebot3_msgs.srv import DrlStep, Goal
 from std_srvs.srv import Empty
@@ -65,8 +66,10 @@ class DrlAgent(Node):
             self.model = DDPG(self.device, self.sim_speed)
         elif self.algorithm == 'td3':
             self.model = TD3(self.device, self.sim_speed)
+        elif self.algorithm == 'sac':
+            self.model = SAC(self.device, self.sim_speed)
         else:
-            quit("\033[1m" + "\033[93m" + f"invalid algorithm specified ({self.algorithm}), choose one of: dqn, ddpg, td3" + "\033[0m}")
+            quit("\033[1m" + "\033[93m" + f"invalid algorithm specified ({self.algorithm}), choose one of: dqn, ddpg, td3, sac" + "\033[0m}")
 
         self.replay_buffer = ReplayBuffer(self.model.buffer_size)
         self.graph = Graph()
@@ -151,7 +154,7 @@ class DrlAgent(Node):
                 # Train
                 if self.training == True:
                     self.replay_buffer.add_sample(state, action, [reward], next_state, [episode_done])
-                    if self.replay_buffer.get_length() >= self.model.batch_size:
+                    if self.replay_buffer.get_length() >= max(self.model.batch_size, self.observe_steps):
                         loss_c, loss_a, = self.model._train(self.replay_buffer)
                         loss_critic += loss_c
                         loss_actor += loss_a

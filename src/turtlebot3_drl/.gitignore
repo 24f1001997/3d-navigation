@@ -102,3 +102,6 @@ venv.bak/
 
 # mypy
 .mypy_cache/
+
+# large pickle files (exclude corrupted ones)
+*.pkl.corrupted

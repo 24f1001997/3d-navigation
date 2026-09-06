@@ -4,3 +4,4 @@ build/
 install/
 log/
 tmux*
+*.pkl.corrupted

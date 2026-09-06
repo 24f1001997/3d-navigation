@@ -1,0 +1,77 @@
+device = cuda
+simulation_speed = 1
+state_size = 44
+action_size = 2
+hidden_size = 512
+input_size = 44
+batch_size = 128
+buffer_size = 1000000
+discount_factor = 0.99
+learning_rate = 0.003
+tau = 0.003
+step_time = 0.01
+loss_function = <function smooth_l1_loss at 0x76edd3ad8ca0>
+epsilon = 1.0
+epsilon_decay = 0.9995
+epsilon_minimum = 0.05
+reward_function = A
+backward_enabled = False
+stacking_enabled = False
+stack_depth = 3
+frame_skip = 4
+networks = [SACActor(
+  (fc1): Linear(in_features=44, out_features=512, bias=True)
+  (fc2): Linear(in_features=512, out_features=512, bias=True)
+  (mean): Linear(in_features=512, out_features=2, bias=True)
+  (log_std): Linear(in_features=512, out_features=2, bias=True)
+), SACCritic(
+  (q1_state): Linear(in_features=44, out_features=256, bias=True)
+  (q1_action): Linear(in_features=2, out_features=256, bias=True)
+  (q1_fc): Linear(in_features=512, out_features=512, bias=True)
+  (q1_out): Linear(in_features=512, out_features=1, bias=True)
+  (q2_state): Linear(in_features=44, out_features=256, bias=True)
+  (q2_action): Linear(in_features=2, out_features=256, bias=True)
+  (q2_fc): Linear(in_features=512, out_features=512, bias=True)
+  (q2_out): Linear(in_features=512, out_features=1, bias=True)
+), SACCritic(
+  (q1_state): Linear(in_features=44, out_features=256, bias=True)
+  (q1_action): Linear(in_features=2, out_features=256, bias=True)
+  (q1_fc): Linear(in_features=512, out_features=512, bias=True)
+  (q1_out): Linear(in_features=512, out_features=1, bias=True)
+  (q2_state): Linear(in_features=44, out_features=256, bias=True)
+  (q2_action): Linear(in_features=2, out_features=256, bias=True)
+  (q2_fc): Linear(in_features=512, out_features=512, bias=True)
+  (q2_out): Linear(in_features=512, out_features=1, bias=True)
+)]
+iteration = 0
+alpha = 0.2
+target_entropy = -2.0
+log_alpha = tensor([0.], device='cuda:0', requires_grad=True)
+alpha_optimizer = Adam (
+Parameter Group 0
+    amsgrad: False
+    betas: (0.9, 0.999)
+    eps: 1e-08
+    lr: 0.003
+    weight_decay: 0
+)
+actor_optimizer = AdamW (
+Parameter Group 0
+    amsgrad: False
+    betas: (0.9, 0.999)
+    eps: 1e-08
+    lr: 0.003
+    weight_decay: 0.01
+)
+critic_optimizer = AdamW (
+Parameter Group 0
+    amsgrad: False
+    betas: (0.9, 0.999)
+    eps: 1e-08
+    lr: 0.003
+    weight_decay: 0.01
+)
+last_actor_loss = 0.0
+last_critic_loss = 0.0
+last_alpha_loss = 0.0
+
