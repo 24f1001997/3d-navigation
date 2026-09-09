@@ -74,9 +74,9 @@ def generate_report(logdir, stage_num):
             
             plt.figure(figsize=(10, 6))
             # Plot the raw data lightly in the background (optional, but looks good)
-            plt.plot(df['episode'], df[col_name], alpha=0.2, color='gray', label='Raw Data')
+            plt.plot(df['episode'].values, df[col_name].values, alpha=0.2, color='gray', label='Raw Data')
             # Plot the rolling average
-            plt.plot(df['episode'], rolling_avg, color='blue', linewidth=2, label=f'{window}-Episode Average')
+            plt.plot(df['episode'].values, rolling_avg.values, color='blue', linewidth=2, label=f'{window}-Episode Average')
             
             plt.title(f'{metric_title} (average {window} episodes)')
             plt.xlabel('Episode')
@@ -101,7 +101,7 @@ def generate_report(logdir, stage_num):
 
 if __name__ == '__main__':
     # You can change the directory and stage number here as needed
-    LOG_DIR = '/home/pranav/turtlebot3_drlnav/src/turtlebot3_drl/model/GPREDDY/sac_0_stage_1/'
+    LOG_DIR = '/home/pranav/turtlebot3_drlnav/src/turtlebot3_drl/model/GPREDDY/sac_1_stage_1/'
     STAGE = 1
     
     generate_report(LOG_DIR, STAGE)
