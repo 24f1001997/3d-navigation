@@ -4,11 +4,11 @@ import os
 import glob
 
 def main():
-    logdir = '/home/pranav/turtlebot3_drlnav/src/turtlebot3_drl/model/GPREDDY/sac_4_stage_4/'
+    logdir = '/home/pranav/turtlebot3_drlnav/src/turtlebot3_drl/model/GPREDDY/sac_0_stage_1/'
     
     # Find all train log files in the main directory and backup_logs directory
-    logfiles = glob.glob(os.path.join(logdir, '_train_stage4_*.txt')) + \
-               glob.glob(os.path.join(logdir, 'backup_logs', '_train_stage4_*.txt'))
+    logfiles = glob.glob(os.path.join(logdir, '_train_stage1_*.txt')) + \
+               glob.glob(os.path.join(logdir, 'backup_logs', '_train_stage1_*.txt'))
                
     if not logfiles:
         print(f"Error: No log files found in {logdir}")

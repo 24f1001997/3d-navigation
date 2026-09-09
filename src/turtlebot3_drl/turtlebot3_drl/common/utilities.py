@@ -1,4 +1,3 @@
-from queue import Empty
 from turtlebot3_msgs.srv import DrlStep
 from turtlebot3_msgs.srv import Goal
 from std_srvs.srv import Empty

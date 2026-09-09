@@ -33,6 +33,7 @@ class StorageManager:
         self.session = self.session
         self.session_dir = session_dir
 
+    @staticmethod
     def delete_file(path):
         if os.path.exists(path):
             os.remove(path)
