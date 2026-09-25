@@ -45,7 +45,7 @@ def get_reward_B(succeed, action_linear, action_angular, goal_dist, goal_angle, 
     global prev_action_angular
 
     # --- TUNABLE WEIGHTS FOR V3 ---
-    w_smooth = 1.0
+    w_smooth = 0.1          # Reduced from 1.0: was punishing corrective turns too harshly
     w_ttc = 1.0
     T_safe = 1.0  # seconds
     # ------------------------------
@@ -105,9 +105,11 @@ def get_reward_B(succeed, action_linear, action_angular, goal_dist, goal_angle, 
     reward = r_step + r_same_state + r_orientation + r_distance + r_smooth + r_ttc
 
     if succeed == SUCCESS:
-        reward += 10.0
+        reward += 100.0
     elif succeed == COLLISION_OBSTACLE or succeed == COLLISION_WALL:
-        reward -= 0.75
+        reward -= 50.00
+    elif succeed == TIMEOUT:
+        reward -= 25.00
 
     return float(reward)
 
