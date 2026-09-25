@@ -100,16 +100,29 @@ def get_reward_B(succeed, action_linear, action_angular, goal_dist, goal_angle, 
         
     r_ttc = -w_ttc * p_ttc
 
-    # 6. Total Reward Calculation
+    # 6. Obstacle Proximity Penalty (continuous "danger zone" warning)
+    # Gives the robot a gradient signal to steer away BEFORE crashing
+    DANGER_THRESHOLD = 0.50  # meters: start warning when closer than this
+    CRITICAL_THRESHOLD = 0.25 # meters: harsh penalty when dangerously close
+    r_obstacle = 0.0
+    if min_obstacle_dist < DANGER_THRESHOLD:
+        if min_obstacle_dist < CRITICAL_THRESHOLD:
+            # Very close: harsh exponential penalty [-20, -5]
+            r_obstacle = -20.0 * (1.0 - min_obstacle_dist / CRITICAL_THRESHOLD)
+        else:
+            # Approaching: gentle linear warning [-5, 0]
+            r_obstacle = -5.0 * (1.0 - (min_obstacle_dist - CRITICAL_THRESHOLD) / (DANGER_THRESHOLD - CRITICAL_THRESHOLD))
+
+    # 7. Total Reward Calculation
     r_step = -0.05
-    reward = r_step + r_same_state + r_orientation + r_distance + r_smooth + r_ttc
+    reward = r_step + r_same_state + r_orientation + r_distance + r_smooth + r_ttc + r_obstacle
 
     if succeed == SUCCESS:
         reward += 100.0
     elif succeed == COLLISION_OBSTACLE or succeed == COLLISION_WALL:
-        reward -= 50.00
+        reward -= 150.0
     elif succeed == TIMEOUT:
-        reward -= 25.00
+        reward -= 25.0
 
     return float(reward)
 
