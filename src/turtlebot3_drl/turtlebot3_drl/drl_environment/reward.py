@@ -41,6 +41,14 @@ def get_reward_A(succeed, action_linear, action_angular, goal_dist, goal_angle, 
 def get_reward_B(succeed, action_linear, action_angular, goal_dist, goal_angle, min_obstacle_dist):
     global goal_dist_previous
     global env_d_max
+    global prev_action_linear
+    global prev_action_angular
+
+    # --- TUNABLE WEIGHTS FOR V3 ---
+    w_smooth = 1.0
+    w_ttc = 1.0
+    T_safe = 1.0  # seconds
+    # ------------------------------
 
     # 1. Orientation Reward
     theta = abs(math.degrees(goal_angle))
@@ -60,7 +68,6 @@ def get_reward_B(succeed, action_linear, action_angular, goal_dist, goal_angle, 
         r_distance = scaled_d * -0.2
 
     # 3. Same State (Stuck) Penalty
-    # If the robot moved less than 1 mm in this step
     r_same_state = 0.0
     if abs(goal_dist_previous - goal_dist) < 0.001:
         r_same_state = -0.65
@@ -68,9 +75,34 @@ def get_reward_B(succeed, action_linear, action_angular, goal_dist, goal_angle, 
     # Update previous distance for the next step
     goal_dist_previous = goal_dist
 
-    # 4. Base Rewards
+    # 4. Smoothness Penalty (v3)
+    delta_v = action_linear - prev_action_linear
+    delta_w = action_angular - prev_action_angular
+    r_smooth = -w_smooth * ((delta_v ** 2) + (delta_w ** 2))
+    
+    # Update previous actions for the next step
+    prev_action_linear = action_linear
+    prev_action_angular = action_angular
+
+    # 5. Time-to-Collision (TTC) Penalty (v3)
+    # Estimate TTC based on current linear velocity and distance to nearest obstacle
+    if action_linear > 0.001:
+        ttc = min_obstacle_dist / action_linear
+    else:
+        ttc = float('inf') # Not moving forward, TTC is effectively infinite
+        
+    if ttc > T_safe:
+        p_ttc = 0.0
+    elif 0 < ttc <= T_safe:
+        p_ttc = (T_safe - ttc) / T_safe
+    else: # ttc <= 0
+        p_ttc = 1.0
+        
+    r_ttc = -w_ttc * p_ttc
+
+    # 6. Total Reward Calculation
     r_step = -0.05
-    reward = r_step + r_same_state + r_orientation + r_distance
+    reward = r_step + r_same_state + r_orientation + r_distance + r_smooth + r_ttc
 
     if succeed == SUCCESS:
         reward += 10.0
@@ -94,9 +126,14 @@ def reward_initalize(init_distance_to_goal, d_max):
     global goal_dist_initial
     global goal_dist_previous
     global env_d_max
+    global prev_action_linear
+    global prev_action_angular
+    
     goal_dist_initial = init_distance_to_goal
     goal_dist_previous = init_distance_to_goal
     env_d_max = d_max
+    prev_action_linear = 0.0
+    prev_action_angular = 0.0
 
 function_name = "get_reward_" + REWARD_FUNCTION
 reward_function_internal = globals()[function_name]
