@@ -86,7 +86,12 @@ class DrlAgent(Node):
             self.model.device = self.device
             self.sm.load_weights(self.model.networks)
             if self.training:
-                self.replay_buffer.buffer = self.sm.load_replay_buffer(self.model.buffer_size, os.path.join(self.load_session, 'stage'+str(self.sm.stage)+'_latest_buffer.pkl'))
+                try:
+                    self.replay_buffer.buffer = self.sm.load_replay_buffer(self.model.buffer_size, os.path.join(self.load_session, 'stage'+str(self.sm.stage)+'_latest_buffer.pkl'))
+                    print(f"Replay buffer loaded successfully ({self.replay_buffer.get_length()} experiences)")
+                except Exception as e:
+                    print(f"\033[93mWarning: Could not load replay buffer: {e}\033[0m")
+                    print(f"\033[93mStarting with a fresh replay buffer (this is normal when switching stages)\033[0m")
             self.total_steps = self.graph.set_graphdata(self.sm.load_graphdata(), self.episode)
             print(f"global steps: {self.total_steps}")
             print(f"loaded model {self.load_session} (eps {self.episode}): {self.model.get_model_parameters()}")
