@@ -57,13 +57,13 @@ def get_reward_B(succeed, action_linear, action_angular, goal_dist, goal_angle, 
     w_g      = 10.0     # Goal weight:       base +10  × 10  = +100 effective
     w_c      = 200.0    # Collision weight:   base -0.75× 200 = -150 effective
     w_s      = 1.0      # Step weight:        base -0.05× 1   = -0.05 effective
-    w_o      = 1.0      # Orientation weight
-    w_d      = 1.0      # Distance weight
+    w_o      = 5.0      # Orientation weight:  boosted so goal-seeking competes with obstacle avoidance
+    w_d      = 5.0      # Distance weight:     boosted so goal-seeking competes with obstacle avoidance
     w_same   = 1.0      # Same-state weight
     w_ttc    = 1.0      # TTC weight
     w_smooth = 0.1      # Smoothness weight (kept low to allow corrective turns)
     T_safe   = 1.0      # TTC safe threshold in seconds
-    w_timeout = 25.0    # Timeout penalty (not in original v3, added for convergence)
+    w_timeout = 50.0    # Timeout penalty: doubled to make the robot fear wasting time
     # ================================================================ #
 
     # ---------- BASE REWARD VALUES (from v3 diagram) ----------
