@@ -3,42 +3,42 @@ simulation_speed = 1
 state_size = 44
 action_size = 2
 hidden_size = 512
-input_size = 44
-batch_size = 128
+input_size = 132
+batch_size = 256
 buffer_size = 1000000
 discount_factor = 0.99
-learning_rate = 0.003
+learning_rate = 0.001
 tau = 0.003
 step_time = 0.01
-loss_function = <function smooth_l1_loss at 0x718c00b25d30>
+loss_function = <function smooth_l1_loss at 0x7c77a54a3a60>
 epsilon = 1.0
 epsilon_decay = 0.9995
 epsilon_minimum = 0.05
-reward_function = A
+reward_function = B
 backward_enabled = False
-stacking_enabled = False
+stacking_enabled = True
 stack_depth = 3
 frame_skip = 4
 networks = [SACActor(
-  (fc1): Linear(in_features=44, out_features=512, bias=True)
+  (fc1): Linear(in_features=132, out_features=512, bias=True)
   (fc2): Linear(in_features=512, out_features=512, bias=True)
   (mean): Linear(in_features=512, out_features=2, bias=True)
   (log_std): Linear(in_features=512, out_features=2, bias=True)
 ), SACCritic(
-  (q1_state): Linear(in_features=44, out_features=256, bias=True)
+  (q1_state): Linear(in_features=132, out_features=256, bias=True)
   (q1_action): Linear(in_features=2, out_features=256, bias=True)
   (q1_fc): Linear(in_features=512, out_features=512, bias=True)
   (q1_out): Linear(in_features=512, out_features=1, bias=True)
-  (q2_state): Linear(in_features=44, out_features=256, bias=True)
+  (q2_state): Linear(in_features=132, out_features=256, bias=True)
   (q2_action): Linear(in_features=2, out_features=256, bias=True)
   (q2_fc): Linear(in_features=512, out_features=512, bias=True)
   (q2_out): Linear(in_features=512, out_features=1, bias=True)
 ), SACCritic(
-  (q1_state): Linear(in_features=44, out_features=256, bias=True)
+  (q1_state): Linear(in_features=132, out_features=256, bias=True)
   (q1_action): Linear(in_features=2, out_features=256, bias=True)
   (q1_fc): Linear(in_features=512, out_features=512, bias=True)
   (q1_out): Linear(in_features=512, out_features=1, bias=True)
-  (q2_state): Linear(in_features=44, out_features=256, bias=True)
+  (q2_state): Linear(in_features=132, out_features=256, bias=True)
   (q2_action): Linear(in_features=2, out_features=256, bias=True)
   (q2_fc): Linear(in_features=512, out_features=512, bias=True)
   (q2_out): Linear(in_features=512, out_features=1, bias=True)
@@ -52,7 +52,7 @@ Parameter Group 0
     amsgrad: False
     betas: (0.9, 0.999)
     eps: 1e-08
-    lr: 0.003
+    lr: 0.001
     weight_decay: 0
 )
 actor_optimizer = AdamW (
@@ -60,7 +60,7 @@ Parameter Group 0
     amsgrad: False
     betas: (0.9, 0.999)
     eps: 1e-08
-    lr: 0.003
+    lr: 0.001
     weight_decay: 0.01
 )
 critic_optimizer = AdamW (
@@ -68,7 +68,7 @@ Parameter Group 0
     amsgrad: False
     betas: (0.9, 0.999)
     eps: 1e-08
-    lr: 0.003
+    lr: 0.001
     weight_decay: 0.01
 )
 last_actor_loss = 0.0
