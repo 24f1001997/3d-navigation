@@ -101,7 +101,7 @@ def generate_report(logdir, stage_num):
 
 if __name__ == '__main__':
     # You can change the directory and stage number here as needed
-    LOG_DIR = '/home/pranav/turtlebot3_drlnav/src/turtlebot3_drl/model/GPREDDY/sac_1_stage_1/'
+    LOG_DIR = '/home/pranav/turtlebot3_drlnav/src/turtlebot3_drl/model/GPREDDY/sac_4_stage_1/'
     STAGE = 1
     
     generate_report(LOG_DIR, STAGE)
