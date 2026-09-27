@@ -11,9 +11,9 @@ def generate_report(logdir, stage_num):
     output_dir = os.path.join(logdir, 'graphs_output')
     os.makedirs(output_dir, exist_ok=True)
     
-    # Find all train log files
-    logfiles = glob.glob(os.path.join(logdir, f'_train_stage{stage_num}_*.txt')) + \
-               glob.glob(os.path.join(logdir, 'backup_logs', f'_train_stage{stage_num}_*.txt'))
+    # Find all train log files for any stage
+    logfiles = glob.glob(os.path.join(logdir, '_train_stage*.txt')) + \
+               glob.glob(os.path.join(logdir, 'backup_logs', '_train_stage*.txt'))
                
     if not logfiles:
         print(f"Error: No log files found in {logdir}")
@@ -41,7 +41,7 @@ def generate_report(logdir, stage_num):
     print(f"Loaded data up to episode {df['episode'].max()}")
     
     # Save the consolidated raw data to CSV (as requested)
-    csv_path = os.path.join(output_dir, f'training_data_stage{stage_num}.csv')
+    csv_path = os.path.join(output_dir, 'training_data_all_stages.csv')
     df.to_csv(csv_path, index=False)
     print(f"Saved consolidated CSV data to: {csv_path}")
 

@@ -128,16 +128,16 @@ def get_reward_B(succeed, action_linear, action_angular, goal_dist, goal_angle, 
 
     # Obstacle Proximity Penalty: continuous danger-zone warning
     # Gives gradient signal to steer away BEFORE collision occurs
-    DANGER_THRESHOLD   = 0.50   # meters: start gentle warning
-    CRITICAL_THRESHOLD = 0.25   # meters: harsh penalty zone
+    DANGER_THRESHOLD   = 0.40   # meters: start gentle warning
+    CRITICAL_THRESHOLD = 0.20   # meters: harsh penalty zone
     R_obstacle_prox = 0.0
     if min_obstacle_dist < DANGER_THRESHOLD:
         if min_obstacle_dist < CRITICAL_THRESHOLD:
-            # Very close: harsh penalty, range [-20, -5]
-            R_obstacle_prox = -20.0 * (1.0 - min_obstacle_dist / CRITICAL_THRESHOLD)
+            # Very close: harsh penalty, range [-5, -2]
+            R_obstacle_prox = -5.0 * (1.0 - min_obstacle_dist / CRITICAL_THRESHOLD)
         else:
-            # Approaching: gentle warning, range [-5, 0]
-            R_obstacle_prox = -5.0 * (1.0 - (min_obstacle_dist - CRITICAL_THRESHOLD) / (DANGER_THRESHOLD - CRITICAL_THRESHOLD))
+            # Approaching: gentle warning, range [-2, 0]
+            R_obstacle_prox = -2.0 * (1.0 - (min_obstacle_dist - CRITICAL_THRESHOLD) / (DANGER_THRESHOLD - CRITICAL_THRESHOLD))
 
     # ---------- TOTAL REWARD CALCULATION ----------
     # R = w_g*R_goal + w_c*R_collision + w_s*R_step + w_o*R_orient
