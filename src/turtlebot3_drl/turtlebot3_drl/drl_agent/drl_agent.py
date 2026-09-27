@@ -95,14 +95,14 @@ class DrlAgent(Node):
                     print(f"\033[93mWarning: Could not load replay buffer: {e}\033[0m")
                     print(f"\033[93mStarting with a fresh replay buffer — agent will re-enter observe phase\033[0m")
 
-            if buffer_loaded:
-                # Buffer loaded: resume from where we left off
-                self.total_steps = self.graph.set_graphdata(self.sm.load_graphdata(), self.episode)
-            else:
-                # Buffer empty/failed: reset counters so agent collects fresh data before training
+            # Always load graph data to preserve episode history and counter
+            self.total_steps = self.graph.set_graphdata(self.sm.load_graphdata(), self.episode)
+
+            if not buffer_loaded:
+                # Buffer empty/failed: only reset total_steps so agent re-enters observe phase
+                # Episode counter is preserved so plots continue from where Stage 1 left off
                 self.total_steps = 0
-                self.episode = 0
-                print(f"\033[93mReset episode counter and total_steps to 0 (observe phase will restart)\033[0m")
+                print(f"\033[93mReset total_steps to 0 — observe phase will restart, episode counter preserved at {self.episode}\033[0m")
 
             print(f"global steps: {self.total_steps}")
             print(f"loaded model {self.load_session} (eps {self.episode}): {self.model.get_model_parameters()}")
