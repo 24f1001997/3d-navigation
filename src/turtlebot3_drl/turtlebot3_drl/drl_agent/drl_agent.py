@@ -189,9 +189,12 @@ class DrlAgent(Node):
             self.finish_episode(step, duration, outcome, distance_traveled, reward_sum, loss_critic, loss_actor)
 
     def finish_episode(self, step, eps_duration, outcome, dist_traveled, reward_sum, loss_critic, lost_actor):
-            if self.total_steps < self.observe_steps:
-                print(f"Observe phase: {self.total_steps}/{self.observe_steps} steps")
-                return
+            # Treat it as observe phase if total_steps is low OR if the buffer isn't full yet
+            if self.training:
+                required_buffer = max(self.model.batch_size, self.observe_steps)
+                if self.total_steps < self.observe_steps or self.replay_buffer.get_length() < required_buffer:
+                    print(f"Observe/Buffer-fill phase: Buffer {self.replay_buffer.get_length()}/{required_buffer} steps")
+                    return
 
             self.episode += 1
             print(f"Epi: {self.episode:<5}R: {reward_sum:<8.0f}outcome: {util.translate_outcome(outcome):<13}", end='')
