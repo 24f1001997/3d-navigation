@@ -105,3 +105,4 @@ venv.bak/
 
 # large pickle files (exclude corrupted ones)
 *.pkl.corrupted
+*.pkl.bak
