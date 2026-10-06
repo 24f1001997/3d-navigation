@@ -54,6 +54,7 @@ def generate_report(logdir, stage_num):
     # We will generate graphs for these metrics
     metrics = {
         'Actor loss': 'avg_actor_loss',
+        'Critic loss': 'avg_critic_loss',
         'Episode duration': 'duration',
         'Steps per episode': 'steps',
         'Success rate': 'is_success',
