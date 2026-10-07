@@ -188,10 +188,10 @@ if __name__ == '__main__':
     LOG_DIR = '/home/pranav/turtlebot3_drlnav/src/turtlebot3_drl/model/GPREDDY/sac_6_stage_1/'
     
     # 1. Episode start and end values
-    EPISODE_START = 3001
-    EPISODE_END = 5000
+    EPISODE_START = 1
+    EPISODE_END = 500
     
     # 2. Stage variable
-    STAGE_NUM = 4
+    STAGE_NUM = 1
     
     create_custom_graphs(LOG_DIR, STAGE_NUM, EPISODE_START, EPISODE_END)
