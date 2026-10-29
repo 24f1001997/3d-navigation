@@ -234,7 +234,7 @@ def create_custom_graphs(logdir, stage_num, ep_start, ep_end):
                 if 'ylim' in metric:
                     plt.ylim(metric['ylim'])
                     
-                plt.legend()
+                plt.legend(loc='upper right')
                 plt.grid(True, linestyle='--', alpha=0.7)
                 filename = metric['filename_template'].format(w=w)
                 plt.savefig(os.path.join(output_dir, filename), format='pdf', bbox_inches='tight')
@@ -270,9 +270,9 @@ if __name__ == '__main__':
     
     # 1. Episode start and end values
     EPISODE_START = 1
-    EPISODE_END = 500
+    EPISODE_END = 5000
     
     # 2. Stage variable
-    STAGE_NUM = 1
+    STAGE_NUM = "all"
     
     create_custom_graphs(LOG_DIR, STAGE_NUM, EPISODE_START, EPISODE_END)

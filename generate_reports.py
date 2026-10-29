@@ -91,7 +91,7 @@ def generate_report(logdir, stage_num):
             if 'rate' in metric_title.lower():
                 plt.ylim([-0.05, 1.05])
                 
-            plt.legend()
+            plt.legend(loc='upper right')
             plt.grid(True, linestyle='--', alpha=0.7)
             
             # Save as PDF
