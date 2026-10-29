@@ -56,13 +56,13 @@ def create_custom_graphs(logdir, stage_num, ep_start, ep_end):
     # ---------------------------------------------------------
     fig, ax = plt.subplots(2, 2, figsize=(18.5, 10.5))
     grid_titles = [
-        f'outcomes per episode from episode {ep_start} to episode {ep_end}',
+        f'cumulative outcomes from episode {ep_start} to episode {ep_end}',
         f'critic loss per episode from episode {ep_start} to episode {ep_end}',
         f'actor loss per episode from episode {ep_start} to episode {ep_end}',
         f'average reward per episode (10-episode average) from episode {ep_start} to episode {ep_end}'
     ]
     grid_ylabels = [
-        'Outcomes',
+        'Cumulative count',
         'Critic loss',
         'Actor loss',
         'Average reward'
@@ -149,6 +149,13 @@ def create_custom_graphs(logdir, stage_num, ep_start, ep_end):
         {
             'col': 'duration',
             'plot_type': 'rolling_avg',
+            'ylabel': 'Episode duration',
+            'title_template': 'episode duration per episode ({w}-episode average) from episode {ep_start} to episode {ep_end}',
+            'filename_template': 'Episode_Duration_(average_{w}_episodes).pdf'
+        },
+        {
+            'col': 'duration',
+            'plot_type': 'rolling_avg',
             'ylabel': 'Average duration',
             'title_template': 'average duration per episode ({w}-episode average) from episode {ep_start} to episode {ep_end}',
             'filename_template': 'Average_Duration_(average_{w}_episodes).pdf'
@@ -183,17 +190,33 @@ def create_custom_graphs(logdir, stage_num, ep_start, ep_end):
             'ylim': [-0.05, 1.05]
         },
         {
+            'col': 'is_success',
+            'plot_type': 'rolling_avg',
+            'ylabel': 'Success rate',
+            'title_template': 'success rate per episode ({w}-episode average) from episode {ep_start} to episode {ep_end}',
+            'filename_template': 'Success_Rate_(average_{w}_episodes).pdf',
+            'ylim': [-0.05, 1.05]
+        },
+        {
+            'col': 'is_collision',
+            'plot_type': 'rolling_avg',
+            'ylabel': 'Collision rate',
+            'title_template': 'collision rate per episode ({w}-episode average) from episode {ep_start} to episode {ep_end}',
+            'filename_template': 'Collision_Rate_(average_{w}_episodes).pdf',
+            'ylim': [-0.05, 1.05]
+        },
+        {
             'col': 'cum_successes',
             'plot_type': 'raw',
-            'ylabel': 'Number of successes',
-            'title': f'number of successes per episode from episode {ep_start} to episode {ep_end}',
+            'ylabel': 'Cumulative number of successes',
+            'title': f'cumulative number of successes from episode {ep_start} to episode {ep_end}',
             'filename': 'Number_of_Successes_(Cumulative).pdf'
         },
         {
             'col': 'cum_collisions',
             'plot_type': 'raw',
-            'ylabel': 'Number of collisions',
-            'title': f'number of collisions per episode from episode {ep_start} to episode {ep_end}',
+            'ylabel': 'Cumulative number of collisions',
+            'title': f'cumulative number of collisions from episode {ep_start} to episode {ep_end}',
             'filename': 'Number_of_Collisions_(Cumulative).pdf'
         }
     ]
@@ -273,6 +296,6 @@ if __name__ == '__main__':
     EPISODE_END = 5000
     
     # 2. Stage variable
-    STAGE_NUM = "all"
+    STAGE_NUM = 'all'
     
     create_custom_graphs(LOG_DIR, STAGE_NUM, EPISODE_START, EPISODE_END)
