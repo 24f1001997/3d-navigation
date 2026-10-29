@@ -56,6 +56,8 @@ def generate_report(logdir, stage_num):
         'Actor loss': 'avg_actor_loss',
         'Critic loss': 'avg_critic_loss',
         'Episode duration': 'duration',
+        'Average duration': 'duration',
+        'Average reward': 'reward',
         'Steps per episode': 'steps',
         'Success rate': 'is_success',
         'Collision rate': 'is_collision',
@@ -63,6 +65,8 @@ def generate_report(logdir, stage_num):
     }
     
     windows = [50, 100]
+    ep_min = int(df['episode'].min())
+    ep_max = int(df['episode'].max())
     
     for metric_title, col_name in metrics.items():
         if col_name not in df.columns:
@@ -79,15 +83,13 @@ def generate_report(logdir, stage_num):
             # Plot the rolling average
             plt.plot(df['episode'].values, rolling_avg.values, color='blue', linewidth=2, label=f'{window}-Episode Average')
             
-            plt.title(f'{metric_title} (average {window} episodes)')
-            plt.xlabel('Episode')
+            plt.title(f'{metric_title.lower()} per episode ({window}-episode average) from episode {ep_min} to episode {ep_max}', fontsize=13)
+            plt.xlabel('episode number', fontsize=11)
+            plt.ylabel(metric_title, fontsize=11)
             
             # Format Y axis properly based on metric type
-            if 'rate' in metric_title:
-                plt.ylabel('Rate (0.0 to 1.0)')
+            if 'rate' in metric_title.lower():
                 plt.ylim([-0.05, 1.05])
-            else:
-                plt.ylabel(metric_title)
                 
             plt.legend()
             plt.grid(True, linestyle='--', alpha=0.7)

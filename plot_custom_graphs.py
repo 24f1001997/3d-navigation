@@ -55,11 +55,25 @@ def create_custom_graphs(logdir, stage_num, ep_start, ep_end):
     # FEATURE A: The 2x2 _figure.png style grid
     # ---------------------------------------------------------
     fig, ax = plt.subplots(2, 2, figsize=(18.5, 10.5))
-    titles = ['Outcomes (Cumulative)', 'Avg Critic Loss', 'Avg Actor Loss', 'Avg Reward (10-ep Rolling)']
+    grid_titles = [
+        f'outcomes per episode from episode {ep_start} to episode {ep_end}',
+        f'critic loss per episode from episode {ep_start} to episode {ep_end}',
+        f'actor loss per episode from episode {ep_start} to episode {ep_end}',
+        f'average reward per episode (10-episode average) from episode {ep_start} to episode {ep_end}'
+    ]
+    grid_ylabels = [
+        'Outcomes',
+        'Critic loss',
+        'Actor loss',
+        'Average reward'
+    ]
     for i in range(4):
         a = ax[int(i/2)][int(i%2!=0)]
-        a.set_title(titles[i])
+        a.set_title(grid_titles[i], fontsize=12)
+        a.set_xlabel('episode number', fontsize=11)
+        a.set_ylabel(grid_ylabels[i], fontsize=11)
         a.xaxis.set_major_locator(MaxNLocator(integer=True))
+        a.grid(True, linestyle='--', alpha=0.7)
         
     # Top-Left: Outcomes (Cumulative)
     # 1=Success, 2=Wall, 3=Dynamic, 4=Timeout, 5=Tumble
@@ -91,6 +105,7 @@ def create_custom_graphs(logdir, stage_num, ep_start, ep_end):
     reward_rolling = df['reward'].rolling(window=10, min_periods=1).mean()
     ax[1][1].plot(episodes, reward_rolling.values, color='gray')
     
+    plt.tight_layout()
     grid_path = os.path.join(output_dir, '_figure_subset.png')
     plt.savefig(grid_path, bbox_inches='tight')
     plt.close()
@@ -110,33 +125,97 @@ def create_custom_graphs(logdir, stage_num, ep_start, ep_end):
     df['cum_collisions'] = np.array(cum_counts[2]) + np.array(cum_counts[3])
     
     metrics_to_plot = [
-        ('Actor Loss', 'avg_actor_loss', 'raw'),
-        ('Critic Loss', 'avg_critic_loss', 'raw'),
-        ('Episode Duration', 'duration', 'rolling_avg'),
-        ('Steps Per Episode', 'steps', 'rolling_avg'),
-        ('Number of Successes (Cumulative)', 'cum_successes', 'raw'),
-        ('Number of Collisions (Cumulative)', 'cum_collisions', 'raw'),
-        ('Timeout Rate', 'is_timeout', 'rolling_avg'),
-        ('Average Reward', 'reward', 'rolling_avg')
+        {
+            'col': 'avg_actor_loss',
+            'plot_type': 'raw',
+            'ylabel': 'Actor loss',
+            'title': f'actor loss per episode from episode {ep_start} to episode {ep_end}',
+            'filename': 'Actor_Loss.pdf'
+        },
+        {
+            'col': 'avg_critic_loss',
+            'plot_type': 'raw',
+            'ylabel': 'Critic loss',
+            'title': f'critic loss per episode from episode {ep_start} to episode {ep_end}',
+            'filename': 'Critic_Loss.pdf'
+        },
+        {
+            'col': 'duration',
+            'plot_type': 'raw',
+            'ylabel': 'Episode duration',
+            'title': f'episode duration per episode from episode {ep_start} to episode {ep_end}',
+            'filename': 'Episode_Duration.pdf'
+        },
+        {
+            'col': 'duration',
+            'plot_type': 'rolling_avg',
+            'ylabel': 'Average duration',
+            'title_template': 'average duration per episode ({w}-episode average) from episode {ep_start} to episode {ep_end}',
+            'filename_template': 'Average_Duration_(average_{w}_episodes).pdf'
+        },
+        {
+            'col': 'steps',
+            'plot_type': 'raw',
+            'ylabel': 'Steps per episode',
+            'title': f'steps per episode from episode {ep_start} to episode {ep_end}',
+            'filename': 'Steps_Per_Episode.pdf'
+        },
+        {
+            'col': 'steps',
+            'plot_type': 'rolling_avg',
+            'ylabel': 'Steps per episode',
+            'title_template': 'steps per episode ({w}-episode average) from episode {ep_start} to episode {ep_end}',
+            'filename_template': 'Steps_Per_Episode_(average_{w}_episodes).pdf'
+        },
+        {
+            'col': 'reward',
+            'plot_type': 'rolling_avg',
+            'ylabel': 'Average reward',
+            'title_template': 'average reward per episode ({w}-episode average) from episode {ep_start} to episode {ep_end}',
+            'filename_template': 'Average_Reward_(average_{w}_episodes).pdf'
+        },
+        {
+            'col': 'is_timeout',
+            'plot_type': 'rolling_avg',
+            'ylabel': 'Timeout rate',
+            'title_template': 'timeout rate per episode ({w}-episode average) from episode {ep_start} to episode {ep_end}',
+            'filename_template': 'Timeout_Rate_(average_{w}_episodes).pdf',
+            'ylim': [-0.05, 1.05]
+        },
+        {
+            'col': 'cum_successes',
+            'plot_type': 'raw',
+            'ylabel': 'Number of successes',
+            'title': f'number of successes per episode from episode {ep_start} to episode {ep_end}',
+            'filename': 'Number_of_Successes_(Cumulative).pdf'
+        },
+        {
+            'col': 'cum_collisions',
+            'plot_type': 'raw',
+            'ylabel': 'Number of collisions',
+            'title': f'number of collisions per episode from episode {ep_start} to episode {ep_end}',
+            'filename': 'Number_of_Collisions_(Cumulative).pdf'
+        }
     ]
     
     windows = [50, 100]
     
-    for title, col, plot_type in metrics_to_plot:
+    for metric in metrics_to_plot:
+        col = metric['col']
         if col not in df.columns:
             continue
             
-        plt.figure(figsize=(10, 6))
-        
-        if plot_type == 'raw':
+        if metric['plot_type'] == 'raw':
+            plt.figure(figsize=(10, 6))
             plt.plot(episodes, df[col].values, color='blue', linewidth=2)
-            plt.title(f'{title} (Episodes {ep_start}-{ep_end})')
-            plt.xlabel('Episode')
+            plt.title(metric['title'], fontsize=13)
+            plt.xlabel('episode number', fontsize=11)
+            plt.ylabel(metric['ylabel'], fontsize=11)
             plt.grid(True, linestyle='--', alpha=0.7)
-            filename = f"{title.replace(' ', '_')}.pdf"
-            plt.savefig(os.path.join(output_dir, filename), format='pdf', bbox_inches='tight')
+            plt.savefig(os.path.join(output_dir, metric['filename']), format='pdf', bbox_inches='tight')
+            plt.close()
             
-        elif plot_type == 'rolling_avg':
+        elif metric['plot_type'] == 'rolling_avg':
             for w in windows:
                 plt.figure(figsize=(10, 6))
                 
@@ -147,17 +226,19 @@ def create_custom_graphs(logdir, stage_num, ep_start, ep_end):
                 rolling = df[col].rolling(window=w, min_periods=1).mean()
                 plt.plot(episodes, rolling.values, color='blue', linewidth=2, label=f'{w}-Episode Avg')
                 
-                plt.title(f'{title} (Average {w} Episodes) (Episodes {ep_start}-{ep_end})')
-                plt.xlabel('Episode')
-                if 'Rate' in title:
-                    plt.ylim([-0.05, 1.05])
+                title_str = metric['title_template'].format(w=w, ep_start=ep_start, ep_end=ep_end)
+                plt.title(title_str, fontsize=13)
+                plt.xlabel('episode number', fontsize=11)
+                plt.ylabel(metric['ylabel'], fontsize=11)
+                
+                if 'ylim' in metric:
+                    plt.ylim(metric['ylim'])
+                    
                 plt.legend()
                 plt.grid(True, linestyle='--', alpha=0.7)
-                filename = f"{title.replace(' ', '_')}_(average_{w}_episodes).pdf"
+                filename = metric['filename_template'].format(w=w)
                 plt.savefig(os.path.join(output_dir, filename), format='pdf', bbox_inches='tight')
                 plt.close()
-        else:
-            plt.close()
 
     # ---------------------------------------------------------
     # FEATURE C: Summary CSV
